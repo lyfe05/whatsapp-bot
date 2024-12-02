@@ -1,7 +1,18 @@
-FROM quay.io/loki-xer/jarvis-md:latest
+FROM node:lts-buster
 
-RUN git clone https://github.com/souravkl11/raganork-md /root/bot
-WORKDIR /root/bot
-ENV TZ=Africa/Nairobi
-RUN yarn install --network-concurrency 1
+RUN apt-get update && \
+  apt-get install -y \
+  ffmpeg \
+  imagemagick \
+  webp && \
+  apt-get upgrade -y && \
+  npm i pm2 -g && \
+  rm -rf /var/lib/apt/lists/*
+
+COPY package.json .
+
+RUN yarn install
+
+COPY . .
+
 CMD ["npm", "start"]
